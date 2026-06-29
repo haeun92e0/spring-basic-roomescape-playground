@@ -35,4 +35,55 @@ public class MissionStepTest {
 
         assertThat(token).isNotBlank();
     }
+
+
+    @Test
+    void 이단계() {
+        Map<String, String> loginParams = new HashMap<>();
+        loginParams.put("email", "admin@email.com");
+        loginParams.put("password", "password");
+
+        ExtractableResponse<Response> loginResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(loginParams)
+                .when().post("/login")
+                .then().statusCode(200)
+                .extract();
+
+        String token = loginResponse.headers().get("Set-Cookie").getValue().split(";")[0].split("=")[1];
+
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "브라운");
+        params.put("date", "2026-07-01");
+        params.put("time", "4");
+        params.put("theme", "1");
+
+        ExtractableResponse<Response> adminResponse = RestAssured.given().log().all()
+                .body(params)
+                .cookie("token", token)
+                .contentType(ContentType.JSON)
+                .post("/reservations")
+                .then().log().all()
+                .extract();
+
+        assertThat(adminResponse.statusCode()).isEqualTo(201);
+        assertThat(adminResponse.jsonPath().getString("name")).isEqualTo("브라운");
+
+
+        Map<String, String> userParams = new HashMap<>();
+        userParams.put("date", "2026-07-02");
+        userParams.put("time", "4");
+        userParams.put("theme", "1");
+
+        ExtractableResponse<Response> userResponse = RestAssured.given().log().all()
+                .body(userParams)
+                .cookie("token", token)
+                .contentType(ContentType.JSON)
+                .post("/reservations")
+                .then().log().all()
+                .extract();
+
+        assertThat(userResponse.statusCode()).isEqualTo(201);
+        assertThat(userResponse.jsonPath().getString("name")).isEqualTo("어드민");
+    }
 }
