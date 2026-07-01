@@ -13,7 +13,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 //컨트롤러의 매개변수를 자동으로 만들어주는 클래스
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
-    private final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+    private final String secretKey;
+
+    public LoginMemberArgumentResolver(String secretKey){
+        this.secretKey = secretKey;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

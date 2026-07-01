@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController { //로그인 관련 요청을 처리
     private final MemberDao memberDao;
     // 32바이트 이상의 비밀키 설정
-    private final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+    private final String secretKey;
 
-    public AuthController(MemberDao memberDao) {
+    public AuthController(MemberDao memberDao, @Value("${jwt.secret}") String secretKey) {
         this.memberDao = memberDao;
+        this.secretKey = secretKey;
     }
 
     @PostMapping("/login")
