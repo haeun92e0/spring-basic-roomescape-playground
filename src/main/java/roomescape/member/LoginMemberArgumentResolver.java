@@ -17,7 +17,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-
         return parameter.getParameterType().equals(Member.class);
     }//컨트롤러의 매개변수가 member 타입이면 처리할 수 있다는 뜻
 
