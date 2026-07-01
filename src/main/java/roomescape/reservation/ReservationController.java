@@ -21,7 +21,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/reservations")
+    @GetMapping("/reservations") //예약 목록 반환
     public List<ReservationResponse> list() {
         return reservationService.findAll();
     }
@@ -29,14 +29,14 @@ public class ReservationController {
     @PostMapping("/reservations")
     public ResponseEntity create(
             @RequestBody ReservationRequest reservationRequest,
-            Member loginMember
+            Member loginMember //현재 로그인한 회원
     ) {
 
         String finalName = (reservationRequest.getName() != null && !reservationRequest.getName().isBlank())
                 ? reservationRequest.getName()
                 : loginMember.getName();
 
-
+        // 예약 요청에 이름이 있으면 그 이름으로, 없으면 로그인한 회원 이름으로
         ReservationRequest finalRequest = new ReservationRequest(
                 finalName,
                 reservationRequest.getDate(),

@@ -1,6 +1,6 @@
 package roomescape.member;
 
-public class LoginRequest {
+public class LoginRequest {// 로그인 요청
     private String email;
     private String password;
 

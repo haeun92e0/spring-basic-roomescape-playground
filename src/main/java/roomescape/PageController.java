@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class PageController {
+public class PageController {//화면을 보여주는 api 컨트롤러
     @GetMapping("/admin")
     public String admin() {
         return "admin/index";

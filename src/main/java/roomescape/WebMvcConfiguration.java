@@ -14,3 +14,4 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         resolvers.add(new LoginMemberArgumentResolver());
     }
 }
+//LoginMemberArgumentResolver을 스프링 MVC에 ㄷ등록해서 사용할 수 있게 해줌
