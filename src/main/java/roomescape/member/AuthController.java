@@ -12,26 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController { //로그인 관련 요청을 처리
-    private final MemberDao memberDao;
-    // 32바이트 이상의 비밀키 설정
-    private final String secretKey;
+    private final MemberService memberService;
 
-    public AuthController(MemberDao memberDao, @Value("${jwt.secret}") String secretKey) {
-        this.memberDao = memberDao;
-        this.secretKey = secretKey;
+    public AuthController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        // 이미 구현되어 있는 findByEmailAndPassword 활용!
-        Member member = memberDao.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-        //JWT 만들기
-        String accessToken = Jwts.builder()
-                .setSubject(member.getId().toString())
-                .claim("name", member.getName())
-                .claim("role", member.getRole())
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes())) //비밀키로 JWT에 서명
-                .compact();
+        String accessToken = memberService.login(loginRequest);
 
         Cookie cookie = new Cookie("token", accessToken); //쿠키 하나를 만듦
         cookie.setHttpOnly(true);
