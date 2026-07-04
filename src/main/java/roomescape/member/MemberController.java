@@ -19,19 +19,19 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/members")
+    @PostMapping("/members") //회원가입
     public ResponseEntity createMember(@RequestBody MemberRequest memberRequest) {
         MemberResponse member = memberService.createMember(memberRequest);
         return ResponseEntity.created(URI.create("/members/" + member.getId())).body(member);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/logout") //로그아웃 시
     public ResponseEntity logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", "");
+        Cookie cookie = new Cookie("token", ""); //새로운 쿠키 만들기
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        cookie.setMaxAge(0); //유효시간 0초로 바꾸기 > 즉시 만료
+        response.addCookie(cookie);// 기존 token을 새로운 쿠키로 덮어씀
         return ResponseEntity.ok().build();
     }
 }

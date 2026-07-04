@@ -17,10 +17,10 @@ public class TimeService {
     }
 
     public List<AvailableTime> getAvailableTime(String date, Long themeId) {
-        List<Reservation> reservations = reservationDao.findByDateAndThemeId(date, themeId);
-        List<Time> times = timeDao.findAll();
+        List<Reservation> reservations = reservationDao.findByDateAndThemeId(date, themeId); //예약된 시간만 있는 리스트
+        List<Time> times = timeDao.findAll(); //전체 시간 조회
 
-        return times.stream()
+        return times.stream() //전체 시간을 하나씩 꺼내서 검사
                 .map(time -> new AvailableTime(
                         time.getId(),
                         time.getValue(),

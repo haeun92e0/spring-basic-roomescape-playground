@@ -15,7 +15,7 @@ public class ThemeDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Theme> findAll() {
+    public List<Theme> findAll() {//테마 전부 가져오기
         return jdbcTemplate.query("SELECT * FROM theme where deleted = false", (rs, rowNum) -> new Theme(
                 rs.getLong("id"),
                 rs.getString("name"),
@@ -23,7 +23,7 @@ public class ThemeDao {
         ));
     }
 
-    public Theme save(Theme theme) {
+    public Theme save(Theme theme) {//새로운 테마 저장
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             var ps = connection.prepareStatement("INSERT INTO theme(name, description) VALUES (?, ?)", new String[]{"id"});
