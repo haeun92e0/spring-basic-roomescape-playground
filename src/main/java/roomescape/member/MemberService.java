@@ -10,11 +10,11 @@ import java.util.Date;
 @Service
 public class MemberService {
     private MemberDao memberDao;
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public MemberService(MemberDao memberDao, @Value("${jwt.secret}") String secretKey) {
+    public MemberService(MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
         this.memberDao = memberDao;
-        this.secretKey = secretKey;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public MemberResponse createMember(MemberRequest memberRequest) {
@@ -29,13 +29,7 @@ public class MemberService {
                 loginRequest.getPassword()
         );
 
-        return Jwts.builder()
-                .setSubject(member.getId().toString())
-                .claim("name", member.getName())
-                .claim("role", member.getRole())
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
+        return jwtTokenProvider.createToken(member);
     }
 
 
