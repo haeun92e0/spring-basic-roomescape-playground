@@ -43,20 +43,25 @@ public class AdminInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-        String role = claims.get("role", String.class);
+            String role = claims.get("role", String.class);
 
-        if (!role.equals("ADMIN")) {
+            if (!role.equals("ADMIN")) {
+                response.setStatus(401);
+                return false;
+            }
+
+            return true;
+        }catch (Exception e){
             response.setStatus(401);
             return false;
         }
-
-        return true;
     }
 
 }
