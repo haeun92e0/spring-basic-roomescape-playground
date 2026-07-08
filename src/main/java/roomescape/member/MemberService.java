@@ -5,6 +5,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class MemberService {
     private MemberDao memberDao;
@@ -31,6 +33,7 @@ public class MemberService {
                 .setSubject(member.getId().toString())
                 .claim("name", member.getName())
                 .claim("role", member.getRole())
+                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .compact();
     }
