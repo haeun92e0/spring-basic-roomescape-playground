@@ -53,7 +53,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             String role = claims.get("role", String.class);
 
             if (!role.equals("ADMIN")) {
-                response.setStatus(401);
+                response.setStatus(403);
                 return false;
             }
 
