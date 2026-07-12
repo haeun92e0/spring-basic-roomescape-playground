@@ -5,14 +5,16 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class MemberService {
     private MemberDao memberDao;
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public MemberService(MemberDao memberDao, @Value("${jwt.secret}") String secretKey) {
+    public MemberService(MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
         this.memberDao = memberDao;
-        this.secretKey = secretKey;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public MemberResponse createMember(MemberRequest memberRequest) {
@@ -27,12 +29,7 @@ public class MemberService {
                 loginRequest.getPassword()
         );
 
-        return Jwts.builder()
-                .setSubject(member.getId().toString())
-                .claim("name", member.getName())
-                .claim("role", member.getRole())
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
+        return jwtTokenProvider.createToken(member);
     }
 
 

@@ -13,10 +13,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 //컨트롤러의 매개변수를 자동으로 만들어주는 클래스
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginMemberArgumentResolver(String secretKey){
-        this.secretKey = secretKey;
+    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider){
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -42,11 +42,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         }
 
         // 토큰 파싱하여 회원 정보 추출
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)//JWT 해석
-                .getBody();
+        Claims claims = jwtTokenProvider.parseToken(token);
         //정보 꺼내기
         Long id = Long.parseLong(claims.getSubject());
         String name = claims.get("name", String.class);

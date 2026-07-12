@@ -3,7 +3,10 @@ package roomescape;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import roomescape.member.AdminInterceptor;
+import roomescape.member.JwtTokenProvider;
 import roomescape.member.LoginMemberArgumentResolver;
 
 import java.util.List;
@@ -11,14 +14,20 @@ import java.util.List;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public WebMvcConfiguration(@Value("${jwt.secret}") String secretKey){
-        this.secretKey = secretKey;
+    public WebMvcConfiguration(JwtTokenProvider jwtTokenProvider){
+        this.jwtTokenProvider =  jwtTokenProvider;
     }
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginMemberArgumentResolver(secretKey));
+        resolvers.add(new LoginMemberArgumentResolver(jwtTokenProvider));
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry){
+        registry.addInterceptor(new AdminInterceptor(jwtTokenProvider))
+                .addPathPatterns("/admin/**", "/admin");
     }
 }
 //LoginMemberArgumentResolver을 스프링 MVC에 ㄷ등록해서 사용할 수 있게 해줌

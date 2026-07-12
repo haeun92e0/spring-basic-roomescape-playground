@@ -1,4 +1,9 @@
-CREATE TABLE time //예약 가능한 시간 저장 테이블
+DROP TABLE IF EXISTS reservation CASCADE;
+DROP TABLE IF EXISTS member CASCADE;
+DROP TABLE IF EXISTS theme CASCADE;
+DROP TABLE IF EXISTS time CASCADE;
+
+CREATE TABLE time
 (
     id         BIGINT      NOT NULL AUTO_INCREMENT,
     time_value VARCHAR(20) NOT NULL, //실제 시간 값
@@ -37,6 +42,7 @@ CREATE TABLE reservation //예약 정보를 저장
     FOREIGN KEY (theme_id) REFERENCES theme (id)
 );
 //예약이 회원과 직접 연결되어있지는 않은 구조
+
 
 INSERT INTO member (name, email, password, role)
 VALUES ('어드민', 'admin@email.com', 'password', 'ADMIN'),
