@@ -12,6 +12,7 @@ import roomescape.theme.Theme;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ReservationController {
@@ -57,5 +58,18 @@ public class ReservationController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         reservationRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/reservations-mine")
+    public List<MyReservationResponse> listMine(Member loginMember) {
+        return reservationRepository.findByMemberId(loginMember.getId()).stream()
+                .map(r -> new MyReservationResponse(
+                        r.getId(),
+                        r.getTheme().getName(),
+                        r.getDate(),
+                        r.getTime().getValue(),
+                        "예약"
+                ))
+                .collect(Collectors.toList());
     }
 }
