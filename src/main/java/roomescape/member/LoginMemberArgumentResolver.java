@@ -13,10 +13,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 //컨트롤러의 매개변수를 자동으로 만들어주는 클래스
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
 
-    public LoginMemberArgumentResolver(String secretKey){
-        this.secretKey = secretKey;
+    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider, MemberRepository memberRepository){
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.memberRepository = memberRepository;
     }
 
     @Override
@@ -42,17 +44,11 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         }
 
         // 토큰 파싱하여 회원 정보 추출
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)//JWT 해석
-                .getBody();
+        Claims claims = jwtTokenProvider.parseToken(token);
         //정보 꺼내기
         Long id = Long.parseLong(claims.getSubject());
-        String name = claims.get("name", String.class);
-        String role = claims.get("role", String.class);
 
-        return new Member(id, name, "", role); // 파싱된 정보로 임시 Member 객체 생성하여 반환
+        return memberRepository.findById(id); // 파싱된 정보로 임시 Member 객체 생성하여 반환
     }
 }
 //브라우저가 보낸 JWT 쿠키를 읽어서 그 안에 저장된 회원 정보를 Member 객체로 복원한 뒤, 컨트롤러의 Member loginMember 매개변수에 자동으로

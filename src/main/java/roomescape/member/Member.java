@@ -1,7 +1,19 @@
 package roomescape.member;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "member")
+@Getter
+@NoArgsConstructor
 public class Member {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String email;
     private String password;
@@ -19,25 +31,5 @@ public class Member {
         this.email = email;
         this.password = password;
         this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRole() {
-        return role;
     }
 }

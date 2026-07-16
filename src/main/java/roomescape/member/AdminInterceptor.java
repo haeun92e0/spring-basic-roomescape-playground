@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 public class AdminInterceptor implements HandlerInterceptor {
-    private final String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AdminInterceptor(String secretKey) {
-        this.secretKey = secretKey;
+    public AdminInterceptor(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider =  jwtTokenProvider;
     }
 
     @Override
@@ -43,20 +43,21 @@ public class AdminInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = jwtTokenProvider.parseToken(token);
 
-        String role = claims.get("role", String.class);
+            String role = claims.get("role", String.class);
 
-        if (!role.equals("ADMIN")) {
+            if (!role.equals("ADMIN")) {
+                response.setStatus(403);
+                return false;
+            }
+
+            return true;
+        }catch (Exception e){
             response.setStatus(401);
             return false;
         }
-
-        return true;
     }
 
 }

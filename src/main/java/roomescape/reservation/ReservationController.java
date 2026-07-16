@@ -8,22 +8,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.member.Member; // 👈 새로 추가된 Member 도메인 패키지 임포트 확인!
-
+import roomescape.theme.Theme;
+import roomescape.time.Time;
+import roomescape.time.TimeRepository;
+import java.util.List;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final ReservationRepository reservationRepository;
+    private final roomescape.member.MemberRepository memberRepository;
+    private final roomescape.theme.ThemeRepository themeRepository;
+    private final TimeRepository timeRepository;
 
-    public ReservationController(ReservationService reservationService) {
-        this.reservationService = reservationService;
+    public ReservationController(ReservationRepository reservationRepository,
+                                 roomescape.member.MemberRepository memberRepository,
+                                 roomescape.theme.ThemeRepository themeRepository, TimeRepository timeRepository) {
+        this.reservationRepository = reservationRepository;
+        this.memberRepository = memberRepository;
+        this.themeRepository = themeRepository;
+        this.timeRepository = timeRepository;
     }
 
     @GetMapping("/reservations") //예약 목록 반환
-    public List<ReservationResponse> list() {
-        return reservationService.findAll();
+    public List<Reservation> list() {
+        return reservationRepository.findAll();
     }
 
     @PostMapping("/reservations")
@@ -31,35 +43,37 @@ public class ReservationController {
             @RequestBody ReservationRequest reservationRequest,
             Member loginMember //현재 로그인한 회원
     ) {
+        Member member = memberRepository.findById(loginMember.getId());
 
         String finalName = (reservationRequest.getName() != null && !reservationRequest.getName().isBlank())
                 ? reservationRequest.getName()
                 : loginMember.getName();
 
-        // 예약 요청에 이름이 있으면 그 이름으로, 없으면 로그인한 회원 이름으로
-        ReservationRequest finalRequest = new ReservationRequest(
-                finalName,
-                reservationRequest.getDate(),
-                reservationRequest.getTheme(),
-                reservationRequest.getTime()
-        );
+        Theme theme = themeRepository.findById(reservationRequest.getTheme());
+        Time time = timeRepository.findById(reservationRequest.getTime());
+        Reservation reservation = new Reservation(finalName, reservationRequest.getDate(), time, theme, member);
+        Reservation saved = reservationRepository.save(reservation);
 
 
-        if (finalRequest.getName() == null
-                || finalRequest.getDate() == null
-                || finalRequest.getTheme() == null
-                || finalRequest.getTime() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        ReservationResponse reservation = reservationService.save(finalRequest);
-
-        return ResponseEntity.created(URI.create("/reservations/" + reservation.getId())).body(reservation);
+        return ResponseEntity.created(URI.create("/reservations/" + saved.getId())).body(saved);
     }
 
     @DeleteMapping("/reservations/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
-        reservationService.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        reservationRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/reservations-mine")
+    public List<MyReservationResponse> listMine(Member loginMember) {
+        return reservationRepository.findByMemberId(loginMember.getId()).stream()
+                .map(r -> new MyReservationResponse(
+                        r.getId(),
+                        r.getTheme().getName(),
+                        r.getDate(),
+                        r.getTime().getValue(),
+                        "예약"
+                ))
+                .collect(Collectors.toList());
     }
 }
