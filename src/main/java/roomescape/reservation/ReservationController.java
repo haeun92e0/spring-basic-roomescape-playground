@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.member.Member; // 👈 새로 추가된 Member 도메인 패키지 임포트 확인!
 import roomescape.theme.Theme;
-
+import roomescape.time.Time;
+import roomescape.time.TimeRepository;
+import java.util.List;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +22,15 @@ public class ReservationController {
     private final ReservationRepository reservationRepository;
     private final roomescape.member.MemberRepository memberRepository;
     private final roomescape.theme.ThemeRepository themeRepository;
+    private final TimeRepository timeRepository;
 
     public ReservationController(ReservationRepository reservationRepository,
                                  roomescape.member.MemberRepository memberRepository,
-                                 roomescape.theme.ThemeRepository themeRepository) {
+                                 roomescape.theme.ThemeRepository themeRepository, TimeRepository timeRepository) {
         this.reservationRepository = reservationRepository;
         this.memberRepository = memberRepository;
         this.themeRepository = themeRepository;
+        this.timeRepository = timeRepository;
     }
 
     @GetMapping("/reservations") //예약 목록 반환
@@ -46,7 +50,7 @@ public class ReservationController {
                 : loginMember.getName();
 
         Theme theme = themeRepository.findById(reservationRequest.getTheme());
-        roomescape.time.Time time = new roomescape.time.Time(reservationRequest.getTime(), "10:00");
+        Time time = timeRepository.findById(reservationRequest.getTime());
         Reservation reservation = new Reservation(finalName, reservationRequest.getDate(), time, theme, member);
         Reservation saved = reservationRepository.save(reservation);
 

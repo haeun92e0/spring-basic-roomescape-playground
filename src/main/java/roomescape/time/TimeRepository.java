@@ -32,4 +32,8 @@ public class TimeRepository {
             entityManager.remove(time);
         }
     }
+
+    public Time findById(Long id) {
+        return entityManager.find(Time.class, id);
+    }
 }
