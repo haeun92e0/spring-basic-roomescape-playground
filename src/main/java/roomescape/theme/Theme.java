@@ -1,26 +1,23 @@
 package roomescape.theme;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "theme")
+@Getter
+@NoArgsConstructor
 public class Theme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     private boolean deleted  = false;
-
-    public Theme() {
-    }
 
     public Theme(Long id, String name, String description) {
         this.id = id;
@@ -31,14 +28,6 @@ public class Theme {
     public Theme(String name, String description) {
         this.name = name;
         this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void delete () {

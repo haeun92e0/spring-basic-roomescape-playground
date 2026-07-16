@@ -1,6 +1,8 @@
 package roomescape.reservation;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import roomescape.member.Member;
 import roomescape.theme.Theme;
 import roomescape.time.Time;
@@ -8,6 +10,8 @@ import roomescape.time.Time;
 
 @Entity
 @Table(name = "reservation")
+@Getter
+@NoArgsConstructor
 public class Reservation {
 
     @Id
@@ -45,30 +49,6 @@ public class Reservation {
         this.time = time;
         this.theme = theme;
         this.member = member;
-    }
-
-    public Reservation() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public Theme getTheme() {
-        return theme;
     }
 
 }

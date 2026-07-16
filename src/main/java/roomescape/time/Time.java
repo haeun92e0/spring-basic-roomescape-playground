@@ -2,9 +2,12 @@ package roomescape.time;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "time")
+@Getter
+@NoArgsConstructor
 public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,15 +29,4 @@ public class Time {
         this.value = value;
     }
 
-    public Time() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }
