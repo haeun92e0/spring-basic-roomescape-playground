@@ -1,17 +1,11 @@
 package roomescape.reservation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+public record MyReservationResponse (
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class MyReservationResponse {
-
-    private Long reservationId;
-    private String theme;
-    private String date;
-    private String time;
-    private String status;
+    Long reservationId,
+    String theme,
+    String date,
+    String time,
+    String status
+){
 }
