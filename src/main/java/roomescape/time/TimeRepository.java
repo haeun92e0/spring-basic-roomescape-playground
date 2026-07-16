@@ -19,10 +19,6 @@ public class TimeRepository {
                 .getResultList();
     }
 
-    public Time findById(Long id) {
-        return entityManager.find(Time.class, id);
-    }
-
     @Transactional
     public Time save(Time time) {
         entityManager.persist(time);

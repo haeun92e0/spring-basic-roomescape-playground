@@ -41,10 +41,6 @@ public class Theme {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public void delete () {
         this.deleted = true;
     }

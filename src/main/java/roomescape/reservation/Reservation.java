@@ -71,7 +71,4 @@ public class Reservation {
         return theme;
     }
 
-    public Member getMember(){
-        return member;
-    }
 }
