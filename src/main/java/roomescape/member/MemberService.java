@@ -27,7 +27,8 @@ public class MemberService {
         Member member = memberRepository.findByEmailAndPassword(
                 loginRequest.getEmail(),
                 loginRequest.getPassword()
-        );
+        )
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
         return jwtTokenProvider.createToken(member);
     }
