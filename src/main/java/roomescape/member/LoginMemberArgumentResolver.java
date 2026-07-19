@@ -14,11 +14,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 //컨트롤러의 매개변수를 자동으로 만들어주는 클래스
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberRepository memberRepository;
 
-    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider, MemberRepository memberRepository){
+    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider){
         this.jwtTokenProvider = jwtTokenProvider;
-        this.memberRepository = memberRepository;
     }
 
     @Override
